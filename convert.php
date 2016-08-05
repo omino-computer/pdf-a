@@ -8,8 +8,6 @@ if (!empty($_FILES) && isset($_FILES['files'])){
 }
 
 function convert($file) {
-    error_log(print_r($file,true));
-
     // initiate FPDI
     $pdf = new FPDI(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false, true);
 
@@ -34,8 +32,7 @@ function convert($file) {
 
     $uid = uniqid();
     $local_dir = dirname(__FILE__) . '/store/' . $uid;
-    $remote_dir = 'download.php?f=/store/' . $uid;
-    $remote_dir = 'store/' . $uid;
+    $remote_url = 'download.php?id=' . $uid;
     if (is_dir($local_dir)) {
         echo json_encode(['error'=>'Internal storage error: directory already exists.']);
         exit;
@@ -46,11 +43,10 @@ function convert($file) {
     }
 
     $local_fname = $local_dir . '/' . $file['name'];
-    $remote_fname = $remote_dir . '/' . $file['name'];
     $data = $pdf->Output($local_fname,'S');
     if (!file_put_contents($local_fname, $data)) {
-        echo json_encode(['error'=>"Internal storage error: cannot create file."]);
+        echo json_encode(['error'=>'Internal storage error: cannot create file.']);
         exit;
     }
-    echo json_encode(['file_path'=>$remote_fname]);
+    echo json_encode(['file_path'=>$remote_url]);
 }
