@@ -13,12 +13,27 @@
         <script>
         $(document).on('ready', function(){
             var $input = $("#file_upload");
+            var if_num=0; // iframe counter
+            function downloadFile(url) {
+                var iframe;
+                if_num++;
+                iframe = document.getElementById("download-container"+if_num);
+                if (iframe === null)
+                {
+                    iframe = document.createElement('iframe');
+                    iframe.id = "download-container";
+                    iframe.style.visibility = 'hidden';
+                    document.body.appendChild(iframe);
+                }
+                iframe.src = url;
+            }
+
             $input.fileinput({
                 allowedFileExtensions:['pdf'],
                 uploadAsync: true,
                 showUpload: false, // hide upload button
                 showRemove: false, // hide remove button
-                            minFileCount: 1,
+                minFileCount: 1,
                 maxFileCount: 50,
                 uploadUrl: 'convert.php'
             }).on("filebatchselected", function(event, files) {
@@ -26,8 +41,7 @@
                 $input.fileinput("upload");
             }).on("fileuploaded", function(event, data, previewId, index) {
                 var file_url = data.response.file_path;
-                window.location = file_url;
-//                $.fileDownload(file_url).fail(function () { alert('File download failed!'); });
+                downloadFile(file_url);
             });
         });
         </script>
