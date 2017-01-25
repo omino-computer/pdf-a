@@ -12,3 +12,7 @@ html {
 .main-content {
     height: 400px;
 }
+
+.file-drop-zone {
+    height: auto;
+}
